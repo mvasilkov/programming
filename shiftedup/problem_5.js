@@ -30,8 +30,48 @@ function solve(numbers, partialSolution, partialString) {
     }
 }
 
+function solveNoRecur(numbers) {
+    let branches = [{ numbers, target: 100, solution: '' }]
+
+    while (branches.length) {
+        const branches2 = []
+
+        while (branches.length) {
+            const b = branches.pop()
+
+            if (b.numbers.length == 0) {
+                if (b.target == 0) {
+                    console.log(b.solution)
+                }
+                continue
+            }
+
+            const x = b.numbers[0]
+            let tail = b.numbers.slice(1)
+
+            if (b.solution == '') {
+                branches2.push({ numbers: tail, target: b.target - x, solution: '' + x })
+            }
+            else {
+                branches2.push({ numbers: tail, target: b.target - x, solution: b.solution + ' + ' + x })
+                branches2.push({ numbers: tail, target: b.target + x, solution: b.solution + ' - ' + x })
+            }
+
+            if (tail.length != 0) {
+                tail = tail.slice()
+                tail[0] += x * 10
+                branches2.push({ numbers: tail, target: b.target, solution: b.solution })
+            }
+        }
+
+        branches = branches2
+    }
+}
+
 if (require.main == module) {
     solve([1, 2, 3, 4, 5, 6, 7, 8, 9], 0, '')
+    console.log('---')
+    solveNoRecur([1, 2, 3, 4, 5, 6, 7, 8, 9])
 
     /* This returns 11 possible solutions:
      * 1 + 2 + 3 - 4 + 5 + 6 + 78 + 9
